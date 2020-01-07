@@ -1,20 +1,18 @@
 import RPi.GPIO as GPIO
 from time import sleep
-import numpy as np
 
-pwm_array = list(500*np.linspace(0,1)) + list(500*np.linspace(1,0))
-motor_list = [16,18,22] # the + , -, and enabler GPIO pins
 
 def safeCleanUp():
-    # clean up
+    ''' Clean up script for GPIO pins '''
     try:
         # Try cleaning up any remaining GPIO channels, if they exist
         GPIO.cleanup()
-
     except RuntimeWarning:
         pass
 
-def motor_control(motorGPIOs, pwmArray, direction='CW', update_frequency=0.1, verbose=False):
+
+
+def servoController(motorGPIOs, pwmArray, direction='CW', update_frequency=0.1, verbose=False):
 
     ''' Powers a motor via GPIO pins in the specified direction (CW or CCW)
     given an array of PWM values (having a range 0-100). For RPi3 typical GPIO
@@ -44,12 +42,12 @@ def motor_control(motorGPIOs, pwmArray, direction='CW', update_frequency=0.1, ve
             print('Engaging motor in CW direction.')
 
     pwm=GPIO.PWM(MotorE,100)
-    pwm.start(pwm_array[0])
+    pwm.start(pwmArray[0])
 
     if verbose:
         print('Engaging PWM array sequence.')
 
-    for pwm_value in pwm_array:
+    for pwm_value in pwmArray:
         try:  
             pwm.ChangeDutyCycle(pwm_value)
         except ValueError:
@@ -65,16 +63,5 @@ def motor_control(motorGPIOs, pwmArray, direction='CW', update_frequency=0.1, ve
     GPIO.output(MotorE, GPIO.LOW)
 
     return
-
-try:
-
-    motor_control(motor_list, pwm_array, direction='CCW')
-    motor_control(motor_list, pwm_array, verbose=True)
-    
-except KeyboardInterrupt:
-    pass
-
-safeCleanUp()
-
 
 
