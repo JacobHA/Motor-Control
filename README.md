@@ -1,2 +1,2 @@
 # Motor-Control
-Script for controlling servo motor on RPi
+Script for controlling servo motor speed and direction on RPi
